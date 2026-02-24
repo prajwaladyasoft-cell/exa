@@ -33,36 +33,49 @@ function applyChanges(){
 }
 
 // Save to GitHub
+<script>
 async function saveToGitHub(){
 
-    const token = "YOUR_GITHUB_TOKEN";
-    const username = "prajwaladyasoft-cell";
+    const token = "YOUR_TOKEN";
+    const username = "YOUR_USERNAME";
     const repo = "editable-site";
     const path = "index.html";
 
-    const response = await fetch(`https://api.github.com/repos/${username}/${repo}/contents/${path}`);
-    const data = await response.json();
+    // 1️⃣ Get current file
+    const getFile = await fetch(`https://api.github.com/repos/${username}/${repo}/contents/${path}`);
+    const fileData = await getFile.json();
 
-    const updatedHTML = document.documentElement.outerHTML;
+    // 2️⃣ Decode original HTML
+    const originalHTML = atob(fileData.content);
 
+    // 3️⃣ Replace only body content
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(originalHTML, "text/html");
+
+    doc.body.innerHTML = document.body.innerHTML;
+
+    const updatedHTML = doc.documentElement.outerHTML;
+
+    // 4️⃣ Save updated file
     await fetch(`https://api.github.com/repos/${username}/${repo}/contents/${path}`, {
         method: "PUT",
         headers: {
-            "Authorization": "token " + token,
+            "Authorization": "Bearer " + token,
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            message: "Updated heading",
+            message: "Updated content",
             content: btoa(updatedHTML),
-            sha: data.sha
+            sha: fileData.sha
         })
     });
 
-    alert("Saved successfully! Netlify will redeploy now.");
+    alert("Saved correctly. Netlify will redeploy.");
 }
-
+</script>
 </script>
 
 </body>
 </html>
+
 
