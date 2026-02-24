@@ -42,11 +42,12 @@ async function saveToGitHub(){
     try {
 
         // 1️⃣ Get current file from GitHub
-        const getFile = await fetch(`https://api.github.com/repos/${username}/${repo}/contents/${path}`, {
-            headers: {
-                "Authorization": "Bearer " + token
-            }
-        });
+      const getFile = await fetch(`https://api.github.com/repos/${username}/${repo}/contents/${path}`, {
+    headers: {
+        "Authorization": "Bearer " + token,
+        "Accept": "application/vnd.github+json"
+    }
+});
 
         if(!getFile.ok){
             alert("Error fetching file from GitHub");
@@ -97,3 +98,4 @@ async function saveToGitHub(){
 
 </body>
 </html>
+
